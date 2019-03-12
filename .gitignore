@@ -1,0 +1,6 @@
+.vscode
+*.class
+.settings
+.project
+.classpath
+.sts4-cache
