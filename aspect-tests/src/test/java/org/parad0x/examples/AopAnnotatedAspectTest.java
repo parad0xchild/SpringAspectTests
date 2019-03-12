@@ -2,6 +2,7 @@ package org.parad0x.examples;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -34,13 +35,13 @@ public class AopAnnotatedAspectTest {
 
         // When
         try {
-            aopAnnotated.retryMethod();
+            aopAnnotated.retryMethod("max attempts");
         } catch (Exception e) {
             actual = e;
         }
 
         // Then
-        assertEquals("Expected 2nd exception message", "RuntimeException 2", actual.getMessage());
+        assertEquals("Expected 2nd exception message", "Runtime Exception 2", actual.getMessage());
 
     }
 
@@ -51,7 +52,7 @@ public class AopAnnotatedAspectTest {
         @Bean
         public AopAnnotatedInterface aopAnnotated() {
             AopAnnotated mockBean = Mockito.mock(AopAnnotated.class);
-            when(mockBean.retryMethod()).thenThrow(new RuntimeException("Runtime Exception 1"))
+            when(mockBean.retryMethod(eq("max attempts"))).thenThrow(new RuntimeException("Runtime Exception 1"))
                     .thenThrow(new RuntimeException("Runtime Exception 2"))
                     .thenThrow(new RuntimeException("Runtime Exception 3"));
             return mockBean;

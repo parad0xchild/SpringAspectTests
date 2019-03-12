@@ -9,7 +9,7 @@ import org.springframework.retry.annotation.Retryable;
 public class AopAnnotated implements AopAnnotatedInterface {
 
     @Retryable(maxAttempts = 2)
-    public String retryMethod() {
+    public String retryMethod(String input) {
         return "";
     }
 }
