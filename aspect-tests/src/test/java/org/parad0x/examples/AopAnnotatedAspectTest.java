@@ -32,17 +32,28 @@ public class AopAnnotatedAspectTest {
     public void testRetryAmount() {
         // Given
         Exception actual = null;
-
         // When
         try {
             aopAnnotated.retryMethod("max attempts");
         } catch (Exception e) {
             actual = e;
         }
-
         // Then
         assertEquals("Expected 2nd exception message", "Runtime Exception 2", actual.getMessage());
+    }
 
+    @Test
+    public void testExcludedRetry() {
+        // Given
+        Exception actual = null;
+        // When
+        try {
+            aopAnnotated.retryMethod("illegal arg");
+        } catch (Exception e) {
+            actual = e;
+        }
+        // Then
+        assertEquals("Expected no retries", "Exception 1", actual.getMessage());
     }
 
     @Configuration
@@ -55,6 +66,8 @@ public class AopAnnotatedAspectTest {
             when(mockBean.retryMethod(eq("max attempts"))).thenThrow(new RuntimeException("Runtime Exception 1"))
                     .thenThrow(new RuntimeException("Runtime Exception 2"))
                     .thenThrow(new RuntimeException("Runtime Exception 3"));
+            when(mockBean.retryMethod(eq("illegal arg"))).thenThrow(new IllegalArgumentException("Exception 1"))
+                    .thenThrow(new RuntimeException("Runtime Exception 2"));
             return mockBean;
         }
     }
