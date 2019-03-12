@@ -1,0 +1,60 @@
+package org.parad0x.examples;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+/**
+ * Unit test for simple App.
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration
+public class AopAnnotatedAspectTest {
+
+    @Autowired
+    AopAnnotatedInterface aopAnnotated;
+
+    @Test
+    public void testRetryAmount() {
+        // Given
+        Exception actual = null;
+
+        // When
+        try {
+            aopAnnotated.retryMethod();
+        } catch (Exception e) {
+            actual = e;
+        }
+
+        // Then
+        assertEquals("Expected 2nd exception message", "RuntimeException 2", actual.getMessage());
+
+    }
+
+    @Configuration
+    @EnableRetry
+    public static class RetryConfig {
+
+        @Bean
+        public AopAnnotatedInterface aopAnnotated() {
+            AopAnnotated mockBean = Mockito.mock(AopAnnotated.class);
+            when(mockBean.retryMethod()).thenThrow(new RuntimeException("Runtime Exception 1"))
+                    .thenThrow(new RuntimeException("Runtime Exception 2"))
+                    .thenThrow(new RuntimeException("Runtime Exception 3"));
+            return mockBean;
+        }
+    }
+}
