@@ -1,15 +1,11 @@
 package org.parad0x.examples;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -56,6 +52,11 @@ public class AopAnnotatedAspectTest {
         assertEquals("Expected no retries", "Exception 1", actual.getMessage());
     }
 
+    /**
+     * By wiring the interface that you implement, the aspect will be properly
+     * loaded. Since it goes through the spring IoC rather than a new instance that
+     * is not proxied
+     */
     @Configuration
     @EnableRetry
     public static class RetryConfig {
